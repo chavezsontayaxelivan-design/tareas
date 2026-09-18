@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_tareas/pantallas/dias_pantalla.dart';
 import 'package:flutter_tareas/pantallas/tareas_pantalla.dart';
 
 void main() {
@@ -12,7 +13,7 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       home: Scaffold(
-        body: TareasPantalla()
+        body: DiasPantalla()
       ),
     );
   }
