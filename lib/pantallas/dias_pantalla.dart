@@ -13,29 +13,46 @@ class _DiasPantallaState extends State<DiasPantalla> {
    final TextEditingController textoTareaControlador= TextEditingController();
     final TextEditingController textoTareaControlador1= TextEditingController();
 
- bool _isListening = false;
- late stt.SpeechToText _speech;
+ bool _isListeningDia = false;
+ bool _isListeningTarde = false;
+ bool _isListeningNoche = false;
+ 
+ late stt.SpeechToText _speechDia;
+ late stt.SpeechToText _speechTarde;
+ late stt.SpeechToText _speechNoche;
 
     List<String> tareas=[];
-   List<String> tarde =[];
-      List<String> noche =[];
+    List<String> tarde =[];
+    List<String> noche =[];
 
 
   @override
   void initState(){
   super.initState();
-  _speech = stt.SpeechToText();
+  _speechDia = stt.SpeechToText();
+  _speechTarde= stt.SpeechToText();
+  _speechNoche= stt.SpeechToText();
  }
 
-void _escucharVoz()  async {
-  if (!_isListening) {
-    bool disponible = await _speech.initialize(
+void _escucharVozDia()  async {
+  if (_isListeningTarde) {
+    setState(()  => _isListeningTarde = false);
+    _speechTarde.stop();
+    
+  }
+  if(_isListeningNoche){
+    setState(() => _isListeningNoche = false);
+    _speechNoche.stop();
+    } 
+    if(!_isListeningDia){
+  
+    bool disponible = await _speechDia.initialize(
       onStatus: (status) => print('Estado: $status'),
       onError: (error) => print('Error: $error'),
     );
     if (disponible) {
-      setState(()  => _isListening = true );
-      _speech.listen(
+      setState(()  => _isListeningDia = true );
+      _speechDia.listen(
         onResult: (result){
           setState(() {
             textEditingController.text =result.recognizedWords;
@@ -46,12 +63,86 @@ void _escucharVoz()  async {
     }
   
 } else {
-setState(() => _isListening = false );
-_speech.stop(); 
+setState(() => _isListeningDia= false );
+_speechDia.stop(); 
+}
+}
+
+
+void _escucharVozTarde()  async {
+   if (_isListeningDia) {
+    setState(()  => _isListeningDia = false);
+    _speechDia.stop();
+    
+  }
+  if(_isListeningNoche){
+    setState(() => _isListeningNoche = false);
+    _speechNoche.stop();
+    } 
+
+    if(!_isListeningTarde){
+
+
+    bool disponible = await _speechTarde.initialize(
+      onStatus: (status) => print('Estado: $status'),
+      onError: (error) => print('Error: $error'),
+    );
+    if (disponible) {
+      setState(()  => _isListeningTarde = true );
+      _speechTarde.listen(
+        onResult: (result){
+          setState(() {
+            textoTareaControlador.text =result.recognizedWords;
+          });
+        
+      },
+      );
+    }
+  
+} else {
+setState(() => _isListeningTarde= false );
+_speechTarde.stop(); 
   
 }
 }
 
+
+
+
+void _escucharVozNoche()  async {
+
+  if (_isListeningDia) {
+    setState(()  => _isListeningDia = false);
+    _speechDia.stop();
+    
+  }
+  if(_isListeningTarde){
+    setState(() => _isListeningTarde = false);
+    _speechTarde.stop();
+    } 
+    if(!_isListeningNoche){
+  
+    bool disponible = await _speechNoche.initialize(
+      onStatus: (status) => print('Estado: $status'),
+      onError: (error) => print('Error: $error'),
+    );
+    if (disponible) {
+      setState(()  => _isListeningNoche= true );
+      _speechNoche.listen(
+        onResult: (result){
+          setState(() {
+            textoTareaControlador1.text =result.recognizedWords;
+          });
+        
+      },
+      );
+    }
+  
+} else {
+setState(() => _isListeningNoche= false );
+_speechNoche.stop(); 
+}
+}
 
 
 void agregarTarea () {
@@ -111,10 +202,10 @@ setState(() {
               border: OutlineInputBorder(),
               suffixIcon: IconButton(
                  icon: Icon(
-                  _isListening ? Icons.mic : Icons.mic_none,
-                  color: _isListening ? Colors.red : Colors.grey,
+                  _isListeningDia ? Icons.mic : Icons.mic_none,
+                  color: _isListeningDia ? Colors.red : Colors.grey,
                  ),
-                 onPressed: _escucharVoz,
+                 onPressed: _escucharVozDia,
                  ),
             
               prefixIcon: Icon(Icons.person),
@@ -155,10 +246,10 @@ setState(() {
                border: OutlineInputBorder(),
               suffixIcon: IconButton(
                  icon: Icon(
-                  _isListening ? Icons.mic : Icons.mic_none,
-                  color: _isListening ? Colors.red : Colors.grey,
+                  _isListeningTarde? Icons.mic : Icons.mic_none,
+                  color: _isListeningTarde ? Colors.red : Colors.grey,
                  ),
-                   onPressed: _escucharVoz,
+                   onPressed: _escucharVozTarde,
               ),
               ),
               ),
@@ -190,10 +281,10 @@ setState(() {
                border: OutlineInputBorder(),
               suffixIcon: IconButton(
                  icon: Icon(
-                  _isListening ? Icons.mic : Icons.mic_none,
-                  color: _isListening ? Colors.red : Colors.grey,
+                  _isListeningNoche? Icons.mic : Icons.mic_none,
+                  color: _isListeningNoche ? Colors.red : Colors.grey,
                  ),
-                   onPressed: _escucharVoz,
+                   onPressed: _escucharVozNoche
               ),
               ),
               ),
